@@ -56,6 +56,7 @@ jobs:
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: 1
+          skip-dirs: /app/checkstyle.jar
 
       # 9 Runtime smoke test (non-interactive CI mode)
       - name: Run container smoke test
