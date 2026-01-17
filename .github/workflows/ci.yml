@@ -36,19 +36,19 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: java
-
+          build-mode: manual
+      #5
+      - name: Build for CodeQL
+        run: javac -cp . *.java models/*.java strategy/*.java algo/*.java factory/*.java
+      #6
       - name: CodeQL Analysis
         uses: github/codeql-action/analyze@v3
 
-      # 5️⃣ Build Java application
-      - name: Compile application
-        run: javac -cp . *.java models/*.java strategy/*.java algo/*.java factory/*.java
-
-      # 6️⃣ Build Docker image
+      # 7 Build Docker image
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/snake-ladder:latest .
 
-      # 7️⃣ Container Security Scan – Trivy
+      # 8 Container Security Scan – Trivy
       - name: Scan image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
@@ -56,17 +56,17 @@ jobs:
           severity: HIGH,CRITICAL
           exit-code: 1
 
-      # 8️⃣ Runtime smoke test (non-interactive CI mode)
+      # 9 Runtime smoke test (non-interactive CI mode)
       - name: Run container smoke test
         run: |
           docker run --rm \
             -e JAVA_TOOL_OPTIONS="-Dmode=ci" \
             ${{ secrets.DOCKERHUB_USERNAME }}/snake-ladder:latest
 
-      # 9️⃣ Login to DockerHub
+      # 10 Login to DockerHub
       - name: DockerHub login
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      # 🔟 Push trusted image
+      # 11 Push trusted image
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/snake-ladder:latest
