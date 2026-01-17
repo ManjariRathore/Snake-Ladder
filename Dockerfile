@@ -1,10 +1,11 @@
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-COPY . .
+COPY *.class ./
+COPY models ./models
+COPY strategy ./strategy
+COPY algo ./algo
+COPY factory ./factory
 
-RUN javac -cp . *.java models/*.java strategy/*.java algo/*.java factory/*.java
-
-CMD ["java", "-Dmode=ci", "Main"]
-
+CMD ["java", "Main"]
