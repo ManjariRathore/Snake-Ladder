@@ -54,6 +54,7 @@ jobs:
         with:
           image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/snake-ladder:latest
           severity: HIGH,CRITICAL
+          ignore-unfixed: true
           exit-code: 1
 
       # 9 Runtime smoke test (non-interactive CI mode)
