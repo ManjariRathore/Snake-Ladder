@@ -9,7 +9,11 @@ public class HumanMoveStrategy implements IMoveStrategy {
   @Override
   public Move makeMove(int currentPosition, int diceRoll, int boardSize) {
     System.out.print("Press Enter to roll the dice...");
-    scanner.nextLine();
+    String mode = System.getProperty("mode");
+
+    if (!"ci".equals(mode)) {
+      scanner.nextLine();
+    }
 
     int newPosition = currentPosition + diceRoll;
     return new Move(diceRoll, currentPosition, newPosition);
