@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snake-ladder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: snake-ladder
+  template:
+    metadata:
+      labels:
+        app: snake-ladder
+    spec:
+      containers:
+        - name: snake-ladder
+          image: ${DOCKERHUB_USERNAME}/snake-ladder:latest
+          imagePullPolicy: Always

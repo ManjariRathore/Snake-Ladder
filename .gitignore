@@ -1,2 +1,35 @@
+# Compiled Java files
 *.class
+
+# Tools
 checkstyle.jar
+
+# Kubernetes config
+kubeconfig
+
+# Environment files
+*.env
+*.env.*
+.env.local
+.env.*.local
+
+# Secrets and credentials
+*secret*
+*credential*
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
