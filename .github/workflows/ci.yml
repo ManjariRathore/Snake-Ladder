@@ -14,41 +14,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout source code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Java runtime
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3️⃣ Linting – Checkstyle
       - name: Run Checkstyle
         run: |
           curl -L -o checkstyle.jar https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.12.1/checkstyle-10.12.1-all.jar
           java -jar checkstyle.jar -c /google_checks.xml *.java models/*.java strategy/*.java algo/*.java factory/*.java
 
-      # 4️⃣ SAST – CodeQL
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: java
           build-mode: manual
-      #5
+
       - name: Build for CodeQL
         run: javac -cp . *.java models/*.java strategy/*.java algo/*.java factory/*.java
-      #6
+
       - name: CodeQL Analysis
         uses: github/codeql-action/analyze@v3
 
-      # 7 Build Docker image
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/snake-ladder:latest .
 
-      # 8 Container Security Scan – Trivy
       - name: Scan image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
@@ -58,22 +52,18 @@ jobs:
           exit-code: 1
           skip-dirs: /app/checkstyle.jar
 
-      # 9 Runtime smoke test (non-interactive CI mode)
       - name: Run container smoke test
         run: |
           docker run --rm \
             -e JAVA_TOOL_OPTIONS="-Dmode=ci" \
             ${{ secrets.DOCKERHUB_USERNAME }}/snake-ladder:latest
 
-      # 10 Login to DockerHub
       - name: DockerHub login
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      # 11 Push trusted image
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/snake-ladder:latest
 
-            # 🔟 Kubernetes CD Deployment
       - name: Deploy to Kubernetes
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
